@@ -238,7 +238,8 @@ fn process_files(file_paths: Vec<String>) -> PyResult<Vec<Topic>> {
             "Communications Blackout (October 28)",
             vec![
                 "Gaza communications blackout",
-                "Water/electricity cutoff",
+                "Water cutoff",
+                "electricity cutoff",
                 "Humanitarian crisis",
                 "Palestinian civilians",
             ]
@@ -254,6 +255,131 @@ fn process_files(file_paths: Vec<String>) -> PyResult<Vec<Topic>> {
                 "Palestinian Health Ministry",
                 "Military operations",
                 "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Al-Shifa Ambulance Airstrike",
+            vec![
+                "Al-Shifa Hospital",
+                "Gaza medical staff",
+                "Palestinian Red Crescent",
+                "Medical infrastructure",
+                "WHO",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "School Attacks During Gaza Invasion",
+            vec![
+                "UNRWA schools",
+                "Gaza civilians",
+                "Displaced Palestinians",
+                "Military operations",
+                "UN aid workers",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "UN Casualty Report (November 3)",
+            vec![
+                "Palestinian Health Ministry",
+                "Gaza Health Ministry",
+                "OCHA",
+                "UN aid workers",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Al-Quds Hospital Incident (November 10)",
+            vec![
+                "Al-Quds Hospital",
+                "Gaza medical staff",
+                "Palestinian Red Crescent",
+                "Military operations",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Hospital Closures (November 12)",
+            vec![
+                "Al-Shifa Hospital",
+                "Al-Quds Hospital",
+                "Gaza medical staff",
+                "WHO",
+                "Medical infrastructure",
+                "Palestinian Health Ministry",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "North Gaza Hospital Evacuations (November 21)",
+            vec![
+                "WHO",
+                "Gaza medical staff",
+                "Mass evacuation orders",
+                "Medical infrastructure",
+                "Palestinian Health Ministry",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Qatar-Brokered Agreement (November 22)",
+            vec![
+                "Hostage deal negotiations",
+                "Qatar mediation",
+                "Ceasefire",
+                "Hostage families",
+                "Joe Biden",
+                "Humanitarian aid",
+                "Palestinian prisoners",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Ongoing Humanitarian Issues",
+            vec![
+                "Gaza Strip Infrastructure Crisis",
+                "Water/electricity cutoff",
+                "Blackout",
+                "Gaza civilians",
+                "Humanitarian aid",
+                "UNRWA",
+                "Palestinian Red Crescent",
+                "WHO",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Hospital System Crisis",
+            vec![
+                "WHO",
+                "Gaza medical staff",
+                "Medical infrastructure",
+                "Palestinian Health Ministry",
+                "MSF",
+                "Palestinian Red Crescent",
             ]
             .into_iter()
             .map(|s| s.to_lowercase())
