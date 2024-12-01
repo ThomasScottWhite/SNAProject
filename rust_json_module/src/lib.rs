@@ -19,6 +19,8 @@ struct Topic {
     oppose_references_per_date: HashMap<String, usize>,
     #[pyo3(get)]
     neutral_references_per_date: HashMap<String, usize>,
+    #[pyo3(get)]
+    keywords: HashSet<String>, // Added keywords field
 }
 
 impl Topic {
@@ -29,6 +31,7 @@ impl Topic {
             support_references_per_date: HashMap::new(),
             oppose_references_per_date: HashMap::new(),
             neutral_references_per_date: HashMap::new(),
+            keywords, // Initialize keywords
         }
     }
 
@@ -107,65 +110,156 @@ fn process_files(file_paths: Vec<String>) -> PyResult<Vec<Topic>> {
     .collect();
 
     // Create topics
-    let attacks_keywords: HashSet<String> = vec![
-        "attack",
-        "hospital",
-        "bomb",
-        "kill",
-        "injure",
-        "violence",
-        "war",
-        "conflict",
-        "fight",
-        "combat",
-        "battle",
-        "assault",
-        "strike",
-        "clash",
-        "offensive",
-        "onslaught",
-        "bombard",
-        "besiege",
-        "invade",
-        "raid",
-        "beset",
-        "pound",
-        "blitz",
-        "shell",
-        "strafe",
-        "blow up",
-        "destroy",
-        "demolish",
-        "flatten",
-        "level",
-        "raze",
-        "wreck",
-        "ruin",
-        "annihilate",
-        "exterminate",
-        "eradicate",
-        "eliminate",
-        "extinguish",
-        "obliterate",
-        "decimate",
-        "massacre",
-        "butcher",
-        "slaughter",
-    ]
-    .into_iter()
-    .map(|s| s.to_lowercase())
-    .collect();
-
-    let mut attacks_topic = Topic::new("attacks", attacks_keywords.clone());
-
-    // // Build keyword to topics mapping
-    // let mut keyword_to_topics: HashMap<&str, Vec<&mut Topic>> = HashMap::new();
-    // for keyword in &attacks_keywords {
-    //     keyword_to_topics
-    //         .entry(keyword)
-    //         .or_insert_with(Vec::new)
-    //         .push(&mut attacks_topic);
-    // }
+    let mut topics = vec![
+        Topic::new(
+            "Israeli Incursions in Tulkarm (August 2023)",
+            vec![
+                "IDF",
+                "Israeli Defense Forces",
+                "Tulkarm incursions",
+                "Military operations",
+                "West Bank",
+                "Nour Shams refugee camp",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "General Military Action Against Palestinian Civilians (August 2023)",
+            vec![
+                "IDF",
+                "Palestinian civilians",
+                "West Bank",
+                "Military operations",
+                "Palestinian Health Ministry",
+                "UNRWA",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Palestinian Militant Bomb Detonations",
+            vec![
+                "Hamas militants",
+                "Islamic Jihad",
+                "Terrorism",
+                "Military installations",
+                "Border communities",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Israeli Settler Violence (First Half 2023)",
+            vec![
+                "West Bank settler violence",
+                "OCHA",
+                "Border communities",
+                "Occupation",
+                "Self-determination",
+                "UN aid workers",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Journalist Killed",
+            vec![
+                "Shireen Abu Akleh",
+                "Press freedom",
+                "Al Jazeera",
+                "International Criminal Court",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "October 7th Events",
+            vec![
+                "Hamas-led Attack on Israel",
+                "October 7 attacks",
+                "Hamas militants",
+                "Islamic Jihad",
+                "Terrorism",
+                "Border communities",
+                "Yahya Sinwar",
+                "Mohammed Deif",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Nova Music Festival Massacre",
+            vec![
+                "Nova Music Festival massacre",
+                "Hamas militants",
+                "Terrorism",
+                "Hostage crisis",
+                "Border communities",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Mid-October Events",
+            vec![
+                "Church of Saint Porphyrius Airstrike (October 19)",
+                "Church of Saint Porphyrius",
+                "Gaza civilians",
+                "Palestinian Health Ministry",
+                "IDF",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Biden Condemns Settler Violence (October 25)",
+            vec![
+                "Joe Biden",
+                "West Bank settler violence",
+                "International response",
+                "Occupation",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Communications Blackout (October 28)",
+            vec![
+                "Gaza communications blackout",
+                "Water/electricity cutoff",
+                "Humanitarian crisis",
+                "Palestinian civilians",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+        Topic::new(
+            "Jabalia Refugee Camp Airstrike (October 31)",
+            vec![
+                "Jabalia refugee camp",
+                "Gaza civilians",
+                "Palestinian Health Ministry",
+                "Military operations",
+                "Civilian casualties",
+            ]
+            .into_iter()
+            .map(|s| s.to_lowercase())
+            .collect(),
+        ),
+    ];
 
     // Process each file
     for file_path in file_paths {
@@ -193,16 +287,19 @@ fn process_files(file_paths: Vec<String>) -> PyResult<Vec<Topic>> {
 
             let post_text = post.text.to_lowercase();
 
-            for keyword in attacks_keywords.iter() {
-                if post_text.contains(keyword) {
-                    attacks_topic.add_reference(post_date.clone(), post_support);
-                    break; // Stop checking after finding a matching keyword
+            for topic in topics.iter_mut() {
+                for keyword in topic.keywords.iter() {
+                    if post_text.contains(keyword) {
+                        topic.add_reference(post_date.clone(), post_support);
+                        break; // Stop checking after finding a matching keyword
+                    }
                 }
             }
         }
     }
+
     // Return the list of topics
-    Ok(vec![attacks_topic])
+    Ok(topics)
 }
 
 fn determine_supporting(
